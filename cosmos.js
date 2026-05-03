@@ -1902,7 +1902,10 @@ function drawPortalShimmer(cx, cy, r, rise, t, alpha) {
     ctx.fillStyle = `rgba(4, 4, 10, ${a})`;
     ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
 
-    const drawSize = r * 2 * 1.04;
+    // Disc fills the inner clip exactly. PNG hole is punched at the same
+    // diameter so the carved ring's inner trim frames the video without
+    // leaving a black gap or letting the video bleed over the trim.
+    const drawSize = r * 2;
     const slowRot = t * 0.00006;
     const pulse = 0.97 + 0.05 * breath;
     ctx.save();
@@ -1919,7 +1922,7 @@ function drawPortalShimmer(cx, cy, r, rise, t, alpha) {
     ctx.globalCompositeOperation = 'screen';
     const halo = ctx.createRadialGradient(cx, cy, r * 0.85, cx, cy, r * 1.02);
     halo.addColorStop(0.0, 'rgba(0, 0, 0, 0)');
-    halo.addColorStop(0.7, `rgba(255, 200, 120, ${0.20 * a})`);
+    halo.addColorStop(0.7, `rgba(255, 200, 120, ${0.08 * a})`);
     halo.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = halo;
     ctx.fillRect(cx - r * 1.02, cy - r * 1.02, r * 2.04, r * 2.04);
@@ -1929,7 +1932,7 @@ function drawPortalShimmer(cx, cy, r, rise, t, alpha) {
     // show an empty hole.
     ctx.fillStyle = `rgba(8, 6, 14, ${a})`;
     ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-    const drawSize = r * 2 * 1.05;
+    const drawSize = r * 2;
     const slowRot = t * 0.00006;
     const pulse = 0.95 + 0.08 * breath;
     ctx.save();
