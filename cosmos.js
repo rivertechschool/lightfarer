@@ -161,6 +161,11 @@ const assets = {
   sanctum_logos_bg: new Image(),
   stargate_logos: new Image(),
   figure_logos_sanctum: new Image(),
+  // Outer-ring sanctums. Built one at a time, same three-asset pattern
+  // (bg + sanctum-grade figure on transparent + stargate ring).
+  sanctum_buddha_bg: new Image(),
+  stargate_buddha: new Image(),
+  figure_buddha_sanctum: new Image(),
 };
 
 let loaded = 0;
@@ -221,6 +226,9 @@ assets.sanctum_logos_bg.src = 'assets/sanctum_logos_bg.png';
 assets.stargate_logos.src = 'assets/stargate_logos.png';
 assets.figure_logos_sanctum.src = 'assets/figure_logos_sanctum.png';
 assets.figure_nuwa_sanctum.src = 'assets/figure_nuwa_sanctum.png';
+assets.sanctum_buddha_bg.src = 'assets/sanctum_buddha_bg.png';
+assets.stargate_buddha.src = 'assets/stargate_buddha.png';
+assets.figure_buddha_sanctum.src = 'assets/figure_buddha_sanctum.png';
 
 // ===== Canvas sizing =====
 let W = 0, H = 0, DPR = 1;
@@ -1293,6 +1301,18 @@ const SANCTUMS = {
       { label: 'To create', correct: true },
       { label: 'To rule', correct: false },
       { label: 'To remember', correct: false },
+    ],
+  },
+  buddha: {
+    bg: 'sanctum_buddha_bg',
+    spriteKey: 'figure_buddha_sanctum',
+    gateKey: 'stargate_buddha',
+    label: 'Sanctum of the Buddha',
+    prompt: 'I left a palace of every comfort and sat under the bodhi tree until I saw clearly.\nWhat is the first noble truth I found?',
+    answers: [
+      { label: 'Life is suffering', correct: true },
+      { label: 'Life is illusion', correct: false },
+      { label: 'Life is a test', correct: false },
     ],
   },
 };
