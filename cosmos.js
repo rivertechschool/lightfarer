@@ -166,6 +166,27 @@ const assets = {
   sanctum_buddha_bg: new Image(),
   stargate_buddha: new Image(),
   figure_buddha_sanctum: new Image(),
+  sanctum_sita_bg: new Image(),
+  stargate_sita: new Image(),
+  figure_sita_sanctum: new Image(),
+  sanctum_demeter_persephone_bg: new Image(),
+  stargate_demeter_persephone: new Image(),
+  figure_demeter_persephone_sanctum: new Image(),
+  sanctum_abraham_sarah_bg: new Image(),
+  stargate_abraham_sarah: new Image(),
+  figure_abraham_sarah_sanctum: new Image(),
+  sanctum_hero_twins_bg: new Image(),
+  stargate_hero_twins: new Image(),
+  figure_hero_twins_sanctum: new Image(),
+  sanctum_brigid_bg: new Image(),
+  stargate_brigid: new Image(),
+  figure_brigid_sanctum: new Image(),
+  sanctum_zoroaster_bg: new Image(),
+  stargate_zoroaster: new Image(),
+  figure_zoroaster_sanctum: new Image(),
+  sanctum_socrates_bg: new Image(),
+  stargate_socrates: new Image(),
+  figure_socrates_sanctum: new Image(),
 };
 
 let loaded = 0;
@@ -229,6 +250,27 @@ assets.figure_nuwa_sanctum.src = 'assets/figure_nuwa_sanctum.png';
 assets.sanctum_buddha_bg.src = 'assets/sanctum_buddha_bg.png';
 assets.stargate_buddha.src = 'assets/stargate_buddha.png';
 assets.figure_buddha_sanctum.src = 'assets/figure_buddha_sanctum.png';
+assets.sanctum_sita_bg.src = 'assets/sanctum_sita_bg.png';
+assets.stargate_sita.src = 'assets/stargate_sita.png';
+assets.figure_sita_sanctum.src = 'assets/figure_sita_sanctum.png';
+assets.sanctum_demeter_persephone_bg.src = 'assets/sanctum_demeter_persephone_bg.png';
+assets.stargate_demeter_persephone.src = 'assets/stargate_demeter_persephone.png';
+assets.figure_demeter_persephone_sanctum.src = 'assets/figure_demeter_persephone_sanctum.png';
+assets.sanctum_abraham_sarah_bg.src = 'assets/sanctum_abraham_sarah_bg.png';
+assets.stargate_abraham_sarah.src = 'assets/stargate_abraham_sarah.png';
+assets.figure_abraham_sarah_sanctum.src = 'assets/figure_abraham_sarah_sanctum.png';
+assets.sanctum_hero_twins_bg.src = 'assets/sanctum_hero_twins_bg.png';
+assets.stargate_hero_twins.src = 'assets/stargate_hero_twins.png';
+assets.figure_hero_twins_sanctum.src = 'assets/figure_hero_twins_sanctum.png';
+assets.sanctum_brigid_bg.src = 'assets/sanctum_brigid_bg.png';
+assets.stargate_brigid.src = 'assets/stargate_brigid.png';
+assets.figure_brigid_sanctum.src = 'assets/figure_brigid_sanctum.png';
+assets.sanctum_zoroaster_bg.src = 'assets/sanctum_zoroaster_bg.png';
+assets.stargate_zoroaster.src = 'assets/stargate_zoroaster.png';
+assets.figure_zoroaster_sanctum.src = 'assets/figure_zoroaster_sanctum.png';
+assets.sanctum_socrates_bg.src = 'assets/sanctum_socrates_bg.png';
+assets.stargate_socrates.src = 'assets/stargate_socrates.png';
+assets.figure_socrates_sanctum.src = 'assets/figure_socrates_sanctum.png';
 
 // ===== Canvas sizing =====
 let W = 0, H = 0, DPR = 1;
@@ -1313,6 +1355,90 @@ const SANCTUMS = {
       { label: 'Life is suffering', correct: true },
       { label: 'Life is illusion', correct: false },
       { label: 'Life is a test', correct: false },
+    ],
+  },
+  sita: {
+    bg: 'sanctum_sita_bg',
+    spriteKey: 'figure_sita_sanctum',
+    gateKey: 'stargate_sita',
+    label: 'Sanctum of Sita',
+    prompt: 'I was carried across the ocean by a demon king, yet I never bent toward him.\nWhat held me steady through every season of exile?',
+    answers: [
+      { label: 'Devotion', correct: true },
+      { label: 'Pride', correct: false },
+      { label: 'Fear', correct: false },
+    ],
+  },
+  demeter_persephone: {
+    bg: 'sanctum_demeter_persephone_bg',
+    spriteKey: 'figure_demeter_persephone_sanctum',
+    gateKey: 'stargate_demeter_persephone',
+    label: 'Sanctum of Demeter and Persephone',
+    prompt: 'My daughter was taken into the dark and I let the fields go barren until she returned.\nWhat does the world learn from our parting and our reunion?',
+    answers: [
+      { label: 'The seasons', correct: true },
+      { label: 'The stars', correct: false },
+      { label: 'The tides', correct: false },
+    ],
+  },
+  abraham_sarah: {
+    bg: 'sanctum_abraham_sarah_bg',
+    spriteKey: 'figure_abraham_sarah_sanctum',
+    gateKey: 'stargate_abraham_sarah',
+    label: 'Sanctum of Abraham and Sarah',
+    prompt: 'We left our father’s house and walked into a country we had never seen.\nWhat was promised to us under that wide field of stars?',
+    answers: [
+      { label: 'A people', correct: true },
+      { label: 'A throne', correct: false },
+      { label: 'A weapon', correct: false },
+    ],
+  },
+  hero_twins: {
+    bg: 'sanctum_hero_twins_bg',
+    spriteKey: 'figure_hero_twins_sanctum',
+    gateKey: 'stargate_hero_twins',
+    label: 'Sanctum of the Hero Twins',
+    prompt: 'We descended into Xibalba, played the lords of death at their own ballgame, and rose again as sun and moon.\nWhat did we trade to make that climb?',
+    answers: [
+      { label: 'Our deaths', correct: true },
+      { label: 'Our names', correct: false },
+      { label: 'Our brother', correct: false },
+    ],
+  },
+  brigid: {
+    bg: 'sanctum_brigid_bg',
+    spriteKey: 'figure_brigid_sanctum',
+    gateKey: 'stargate_brigid',
+    label: 'Sanctum of Brigid',
+    prompt: 'I keep a flame in one hand and point to a well with the other.\nWhat do fire and water together teach the one who tends them?',
+    answers: [
+      { label: 'Healing', correct: true },
+      { label: 'War', correct: false },
+      { label: 'Silence', correct: false },
+    ],
+  },
+  zoroaster: {
+    bg: 'sanctum_zoroaster_bg',
+    spriteKey: 'figure_zoroaster_sanctum',
+    gateKey: 'stargate_zoroaster',
+    label: 'Sanctum of Zoroaster',
+    prompt: 'I taught that every life is a battlefield between truth and the lie.\nWhich three small things tip the scale toward the light?',
+    answers: [
+      { label: 'Good thoughts, words, deeds', correct: true },
+      { label: 'Wealth, power, fame', correct: false },
+      { label: 'Faith, fear, fate', correct: false },
+    ],
+  },
+  socrates: {
+    bg: 'sanctum_socrates_bg',
+    spriteKey: 'figure_socrates_sanctum',
+    gateKey: 'stargate_socrates',
+    label: 'Sanctum of Socrates',
+    prompt: 'I drank the hemlock rather than stop asking inconvenient questions.\nWhich kind of life did I say is not worth living?',
+    answers: [
+      { label: 'The unexamined', correct: true },
+      { label: 'The unhappy', correct: false },
+      { label: 'The unwealthy', correct: false },
     ],
   },
 };
