@@ -49,7 +49,7 @@ const DEITY_PORTALS = {
   zoroaster:           ['saffron'],
   nuwa:                ['rose'],
   demeter_persephone:  ['rose'],
-  logos:               ['amber'],
+  logos:               ['clouds'],
 };
 
 // Active deity's slide queue + current index. Click-on-portal advances.
@@ -158,6 +158,9 @@ const assets = {
   sanctum_nuwa_bg: new Image(),
   stargate_nuwa: new Image(),
   figure_nuwa_sanctum: new Image(),
+  sanctum_logos_bg: new Image(),
+  stargate_logos: new Image(),
+  figure_logos_sanctum: new Image(),
 };
 
 let loaded = 0;
@@ -214,6 +217,9 @@ assets.stargate_vishnu.src = 'assets/stargate_vishnu.png';
 assets.figure_vishnu_sanctum.src = 'assets/figure_vishnu_sanctum.png';
 assets.sanctum_nuwa_bg.src = 'assets/sanctum_nuwa_bg.png';
 assets.stargate_nuwa.src = 'assets/stargate_nuwa.png';
+assets.sanctum_logos_bg.src = 'assets/sanctum_logos_bg.png';
+assets.stargate_logos.src = 'assets/stargate_logos.png';
+assets.figure_logos_sanctum.src = 'assets/figure_logos_sanctum.png';
 assets.figure_nuwa_sanctum.src = 'assets/figure_nuwa_sanctum.png';
 
 // ===== Canvas sizing =====
@@ -1275,6 +1281,18 @@ const SANCTUMS = {
       { label: 'The world', correct: false },
       { label: 'My kin', correct: true },
       { label: 'Myself', correct: false },
+    ],
+  },
+  logos: {
+    bg: 'sanctum_logos_bg',
+    spriteKey: 'figure_logos_sanctum',
+    gateKey: 'stargate_logos',
+    label: 'Sanctum of the Logos',
+    prompt: 'I am the word at the center of all things — present before the first cosmos and after the last.\nWhat does it mean to be made in my image?',
+    answers: [
+      { label: 'To create', correct: true },
+      { label: 'To rule', correct: false },
+      { label: 'To remember', correct: false },
     ],
   },
 };
