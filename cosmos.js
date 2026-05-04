@@ -223,8 +223,8 @@ setTimeout(() => {
   }
 }, 4000);
 
-assets.gas.src = 'assets/gas.png';
-assets.stars.src = 'assets/stars.png';
+assets.gas.src = 'assets/gas.jpg';
+assets.stars.src = 'assets/stars.jpg';
 assets.frame.src = 'assets/frame.png';
 assets.logos.src = 'assets/logos.png';
 assets.figure_inanna.src = 'assets/figure_inanna.png';
@@ -253,48 +253,48 @@ assets.figure_brigid.src = 'assets/figure_brigid.png';
 assets.orb_brigid.src = 'assets/orb_brigid.png';
 assets.figure_zoroaster.src = 'assets/figure_zoroaster.png';
 assets.orb_zoroaster.src = 'assets/orb_zoroaster.png';
-assets.sanctum_inanna.src = 'assets/sanctum_inanna.png';
-assets.sanctum_inanna_bg.src = 'assets/sanctum_inanna_bg.png';
+assets.sanctum_inanna.src = 'assets/sanctum_inanna.jpg';
+assets.sanctum_inanna_bg.src = 'assets/sanctum_inanna_bg.jpg';
 assets.stargate_inanna.src = 'assets/stargate_inanna.png';
 assets.portal_interior_inanna.src = 'assets/portal_interior_inanna.png';
 assets.figure_inanna_sanctum.src = 'assets/figure_inanna_sanctum.png';
-assets.sanctum_osiris_bg.src = 'assets/sanctum_osiris_bg.png';
+assets.sanctum_osiris_bg.src = 'assets/sanctum_osiris_bg.jpg';
 assets.stargate_osiris.src = 'assets/stargate_osiris.png';
 assets.figure_osiris_sanctum.src = 'assets/figure_osiris_sanctum.png';
-assets.sanctum_sophia_bg.src = 'assets/sanctum_sophia_bg.png';
+assets.sanctum_sophia_bg.src = 'assets/sanctum_sophia_bg.jpg';
 assets.stargate_sophia.src = 'assets/stargate_sophia.png';
 assets.figure_sophia_sanctum.src = 'assets/figure_sophia_sanctum.png';
-assets.sanctum_vishnu_bg.src = 'assets/sanctum_vishnu_bg.png';
+assets.sanctum_vishnu_bg.src = 'assets/sanctum_vishnu_bg.jpg';
 assets.stargate_vishnu.src = 'assets/stargate_vishnu.png';
 assets.figure_vishnu_sanctum.src = 'assets/figure_vishnu_sanctum.png';
-assets.sanctum_nuwa_bg.src = 'assets/sanctum_nuwa_bg.png';
+assets.sanctum_nuwa_bg.src = 'assets/sanctum_nuwa_bg.jpg';
 assets.stargate_nuwa.src = 'assets/stargate_nuwa.png';
-assets.sanctum_logos_bg.src = 'assets/sanctum_logos_bg.png';
+assets.sanctum_logos_bg.src = 'assets/sanctum_logos_bg.jpg';
 assets.stargate_logos.src = 'assets/stargate_logos.png';
 assets.figure_logos_sanctum.src = 'assets/figure_logos_sanctum.png';
 assets.figure_nuwa_sanctum.src = 'assets/figure_nuwa_sanctum.png';
-assets.sanctum_buddha_bg.src = 'assets/sanctum_buddha_bg.png';
+assets.sanctum_buddha_bg.src = 'assets/sanctum_buddha_bg.jpg';
 assets.stargate_buddha.src = 'assets/stargate_buddha.png';
 assets.figure_buddha_sanctum.src = 'assets/figure_buddha_sanctum.png';
-assets.sanctum_sita_bg.src = 'assets/sanctum_sita_bg.png';
+assets.sanctum_sita_bg.src = 'assets/sanctum_sita_bg.jpg';
 assets.stargate_sita.src = 'assets/stargate_sita.png';
 assets.figure_sita_sanctum.src = 'assets/figure_sita_sanctum.png';
-assets.sanctum_demeter_persephone_bg.src = 'assets/sanctum_demeter_persephone_bg.png';
+assets.sanctum_demeter_persephone_bg.src = 'assets/sanctum_demeter_persephone_bg.jpg';
 assets.stargate_demeter_persephone.src = 'assets/stargate_demeter_persephone.png';
 assets.figure_demeter_persephone_sanctum.src = 'assets/figure_demeter_persephone_sanctum.png';
-assets.sanctum_abraham_sarah_bg.src = 'assets/sanctum_abraham_sarah_bg.png';
+assets.sanctum_abraham_sarah_bg.src = 'assets/sanctum_abraham_sarah_bg.jpg';
 assets.stargate_abraham_sarah.src = 'assets/stargate_abraham_sarah.png';
 assets.figure_abraham_sarah_sanctum.src = 'assets/figure_abraham_sarah_sanctum.png';
-assets.sanctum_hero_twins_bg.src = 'assets/sanctum_hero_twins_bg.png';
+assets.sanctum_hero_twins_bg.src = 'assets/sanctum_hero_twins_bg.jpg';
 assets.stargate_hero_twins.src = 'assets/stargate_hero_twins.png';
 assets.figure_hero_twins_sanctum.src = 'assets/figure_hero_twins_sanctum.png';
-assets.sanctum_brigid_bg.src = 'assets/sanctum_brigid_bg.png';
+assets.sanctum_brigid_bg.src = 'assets/sanctum_brigid_bg.jpg';
 assets.stargate_brigid.src = 'assets/stargate_brigid.png';
 assets.figure_brigid_sanctum.src = 'assets/figure_brigid_sanctum.png';
-assets.sanctum_zoroaster_bg.src = 'assets/sanctum_zoroaster_bg.png';
+assets.sanctum_zoroaster_bg.src = 'assets/sanctum_zoroaster_bg.jpg';
 assets.stargate_zoroaster.src = 'assets/stargate_zoroaster.png';
 assets.figure_zoroaster_sanctum.src = 'assets/figure_zoroaster_sanctum.png';
-assets.sanctum_socrates_bg.src = 'assets/sanctum_socrates_bg.png';
+assets.sanctum_socrates_bg.src = 'assets/sanctum_socrates_bg.jpg';
 assets.stargate_socrates.src = 'assets/stargate_socrates.png';
 assets.figure_socrates_sanctum.src = 'assets/figure_socrates_sanctum.png';
 assets.title_dawn_council.src = 'assets/title_dawn_council.jpg';
@@ -600,7 +600,12 @@ function drawRings(cosmosRect, t) {
   }
 
   drawRing(innerR, 0.55, 0.20);
-  drawRing(outerR, 0.45, 0.16);
+  // Outer (Ancient) ring is hidden until the player has unlocked it.
+  // Per spec section 5 layer 4: opens when all five Dawn stars are at Bright.
+  // window.ancientRingUnlocked is set elsewhere when that happens.
+  if (window.ancientRingUnlocked) {
+    drawRing(outerR, 0.45, 0.16);
+  }
 
   ctx.restore();
 }
@@ -1237,19 +1242,40 @@ function drawLogos(cosmosRect, t) {
   );
   ctx.restore();
 
+  // ---- 4b. Opaque white-hot disc to mask the painting's dark center ----
+  // The Logos painting has a small dark detail at its core that reads as a
+  // black spot. Paint a solid hot disc on top with source-over so the dark
+  // pixels are fully replaced, then layer the additive corona over it for life.
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
+  const maskR = size * 0.20;
+  const maskGrad = ctx.createRadialGradient(px, py, 0, px, py, maskR);
+  maskGrad.addColorStop(0,    'rgba(255, 250, 225, 1)');
+  maskGrad.addColorStop(0.55, 'rgba(255, 240, 195, 0.95)');
+  maskGrad.addColorStop(0.85, 'rgba(255, 225, 160, 0.45)');
+  maskGrad.addColorStop(1,    'rgba(255, 220, 140, 0)');
+  ctx.fillStyle = maskGrad;
+  ctx.beginPath();
+  ctx.arc(px, py, maskR, 0, Math.PI * 2);
+  ctx.fill();
+
   // ---- 5. Inner core hotspot ----
   // Bright additive blob right at the center of the painting. This is what
   // sells "there's a light source inside this thing." Pulses harder than the
   // outer layers so the core feels alive while the corona stays gentle.
+  // The core is also wide + bright enough to mask the painting's small dark
+  // central detail — the bare painting reads as having a black spot at center,
+  // so we burn it out with light.
   ctx.globalAlpha = 1;
   ctx.globalCompositeOperation = 'lighter';
   const corePulse = breathSin * 0.5 + 0.5; // 0..1
-  const coreR = size * 0.18 * (1 + breathSin * 0.05);
+  const coreR = size * 0.32 * (1 + breathSin * 0.05);
   const coreGrad = ctx.createRadialGradient(px, py, 0, px, py, coreR);
-  const coreAlpha = 0.13 + corePulse * 0.10;
-  coreGrad.addColorStop(0, `rgba(255, 250, 230, ${coreAlpha})`);
-  coreGrad.addColorStop(0.5, `rgba(255, 230, 170, ${coreAlpha * 0.5})`);
-  coreGrad.addColorStop(1, 'rgba(255, 220, 140, 0)');
+  const coreAlpha = 0.55 + corePulse * 0.15;
+  coreGrad.addColorStop(0,    `rgba(255, 252, 235, ${coreAlpha})`);
+  coreGrad.addColorStop(0.35, `rgba(255, 240, 190, ${coreAlpha * 0.6})`);
+  coreGrad.addColorStop(0.7,  `rgba(255, 220, 140, ${coreAlpha * 0.2})`);
+  coreGrad.addColorStop(1,    'rgba(255, 220, 140, 0)');
   ctx.fillStyle = coreGrad;
   ctx.beginPath();
   ctx.arc(px, py, coreR, 0, Math.PI * 2);
@@ -2292,7 +2318,7 @@ function start() {
         drawSanctumSprite(assets[sanctumDef.spriteKey], sanctumT);
 
         // Register the pool's click zone (matches the painted pool rectangle).
-        // Coordinates calibrated against sanctum_inanna_bg.png in cover-fit.
+        // Coordinates calibrated against sanctum_inanna_bg.jpg in cover-fit.
         if (lessonPhase === 'idle') {
           poolHit = {
             x: W * 0.27,
