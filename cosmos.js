@@ -193,11 +193,35 @@ const assets = {
 
 let loaded = 0;
 const total = Object.keys(assets).length;
+let started = false;
 function onLoad() {
   loaded++;
-  if (loaded === total) start();
+  if (loaded === total && !started) {
+    started = true;
+    start();
+  }
 }
 Object.values(assets).forEach((img) => (img.onload = onLoad));
+
+// Fast-start: as soon as the title image is ready, kick off the render loop
+// so the player sees the title screen immediately. Other 70+ assets keep
+// loading in the background and will be ready by the time the player picks
+// a star and enters the cosmos. Without this, a slow connection can stare
+// at a black canvas for 10+ seconds while everything downloads serially.
+assets.title_dawn_council.addEventListener('load', () => {
+  if (!started) {
+    started = true;
+    start();
+  }
+});
+// Hard fallback: if the title image somehow fails or stalls, kick off
+// rendering after 4 seconds anyway so the user never sees a frozen page.
+setTimeout(() => {
+  if (!started) {
+    started = true;
+    start();
+  }
+}, 4000);
 
 assets.gas.src = 'assets/gas.png';
 assets.stars.src = 'assets/stars.png';
@@ -273,7 +297,7 @@ assets.figure_zoroaster_sanctum.src = 'assets/figure_zoroaster_sanctum.png';
 assets.sanctum_socrates_bg.src = 'assets/sanctum_socrates_bg.png';
 assets.stargate_socrates.src = 'assets/stargate_socrates.png';
 assets.figure_socrates_sanctum.src = 'assets/figure_socrates_sanctum.png';
-assets.title_dawn_council.src = 'assets/title_dawn_council.png';
+assets.title_dawn_council.src = 'assets/title_dawn_council.jpg';
 
 // ===== Canvas sizing =====
 let W = 0, H = 0, DPR = 1;
