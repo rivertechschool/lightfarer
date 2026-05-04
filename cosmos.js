@@ -187,6 +187,8 @@ const assets = {
   sanctum_socrates_bg: new Image(),
   stargate_socrates: new Image(),
   figure_socrates_sanctum: new Image(),
+  // Title screen hero painting — 5 Dawn sages before the Logos throne.
+  title_dawn_council: new Image(),
 };
 
 let loaded = 0;
@@ -271,6 +273,7 @@ assets.figure_zoroaster_sanctum.src = 'assets/figure_zoroaster_sanctum.png';
 assets.sanctum_socrates_bg.src = 'assets/sanctum_socrates_bg.png';
 assets.stargate_socrates.src = 'assets/stargate_socrates.png';
 assets.figure_socrates_sanctum.src = 'assets/figure_socrates_sanctum.png';
+assets.title_dawn_council.src = 'assets/title_dawn_council.png';
 
 // ===== Canvas sizing =====
 let W = 0, H = 0, DPR = 1;
@@ -913,6 +916,16 @@ function drawOrbs(cosmosRect, t) {
     if (!figImg || !figImg.complete) continue;
     if (!orbImg || !orbImg.complete) continue;
 
+    // Start-sequence visibility: until the player has progressed past the
+    // initial pick, only the chosen Dawn star renders. All other inner-ring
+    // stars stay hidden (the spec calls for staggered cinematic reveals as
+    // the chosen star reaches Bright). Outer-ring (Ancient) figures stay
+    // hidden until all five Dawn stars unlock.
+    if (window.chosenStartStar) {
+      if (fig.ring === 'inner' && fig.key !== window.chosenStartStar) continue;
+      if (fig.ring === 'outer') continue;
+    }
+
     const ringR = fig.ring === 'inner' ? innerR : outerR;
     const ringOrbit = fig.ring === 'inner' ? innerOrbitOffset : outerOrbitOffset;
     const a = fig.angle + ringOrbit;
@@ -1510,6 +1523,14 @@ function choosePillar(index) {
 // Click handler — routes to enterSanctum if the pointer is over a hoverable
 // target, or handles in-sanctum clicks (back chip, begin chip, pillars).
 canvas.addEventListener('click', (e) => {
+  // Start sequence (title + picker) gets first crack at every click. It
+  // returns true once the click is consumed (or to swallow stray clicks on
+  // its own screen).
+  if (window.gameScreen && window.gameScreen !== 'cosmos') {
+    if (window.startSeqHandleClick && window.startSeqHandleClick(e.clientX, e.clientY)) {
+      return;
+    }
+  }
   if (activeSanctum && sanctumT > 0.5) {
     // Inside a sanctum.
     // 1. Back chip always wins.
@@ -1580,12 +1601,19 @@ canvas.addEventListener('click', (e) => {
     return;
   }
   // In cosmos: route to whichever orb / Logos is currently hovered.
+  // Logos is visible from start but locked until the chosen Dawn star
+  // reaches Bright (or 1 Ember spent). For now (no progression yet), block
+  // entry whenever a start star has been picked but Logos hasn't unlocked.
   if (hoveredKey) enterSanctum(hoveredKey);
-  else if (logosHovered) enterSanctum('logos');
+  else if (logosHovered && !window.logosLocked) enterSanctum('logos');
 });
 
 // ESC also exits a sanctum. Standard expectation for any zoomed-in view.
 window.addEventListener('keydown', (e) => {
+  // Start sequence (title + picker) handles arrow keys and Enter/Space.
+  if (window.gameScreen && window.gameScreen !== 'cosmos') {
+    if (window.startSeqHandleKey && window.startSeqHandleKey(e)) return;
+  }
   if (e.key === 'Escape' && activeSanctum) exitSanctum();
 });
 
@@ -2142,6 +2170,15 @@ function drawBeginChip(alpha) {
   beginHit = drawChip('Begin', W * 0.58, H * 0.85, 'center', alpha);
 }
 
+// Called by start.js when the player picks their first Dawn star. Locks the
+// Logos (visible-but-not-clickable) per spec section 5 layer 4. Once the
+// chosen star reaches Bright (or 1 Ember spent), set window.logosLocked = false.
+window.onStartStarChosen = function (key) {
+  window.logosLocked = true;
+  // Hide the bottom hint line if it's still up.
+  if (hint) hint.classList.add('fade');
+};
+
 // ===== Main loop =====
 function start() {
   function loop(t) {
@@ -2179,6 +2216,17 @@ function start() {
     ctx.fillStyle = '#0a0a0c';
     ctx.fillRect(0, 0, W, H);
 
+    // Start sequence (title + picker) takes the whole canvas before cosmos.
+    // Cosmos doesn't render until the player has chosen their first Dawn star.
+    if (window.gameScreen && window.gameScreen !== 'cosmos') {
+      if (window.startSeqDraw) window.startSeqDraw(t);
+      // Cursor for title/picker is set by start.js via a flag.
+      canvas.style.cursor = (window.startSeqWantsPointer && window.startSeqWantsPointer(pointerX, pointerY))
+        ? 'pointer' : 'default';
+      requestAnimationFrame(loop);
+      return;
+    }
+
     // Wall fills the surrounding viewport ONLY in framed-on-wall mode
     drawWallFallback(frameRect);
 
@@ -2193,7 +2241,17 @@ function start() {
       drawStars(cosmosRect, t);
       drawRings(cosmosRect, t);
       drawOrbs(cosmosRect, t);
-      drawLogos(cosmosRect, t);
+      // Logos is visible from start but visually muted while locked, so the
+      // player feels its presence without thinking it's clickable. Spec calls
+      // for ~75% intensity until first Dawn star reaches Bright (or 1 Ember).
+      if (window.logosLocked) {
+        ctx.save();
+        ctx.globalAlpha *= 0.75;
+        drawLogos(cosmosRect, t);
+        ctx.restore();
+      } else {
+        drawLogos(cosmosRect, t);
+      }
       drawFrame();
       ctx.restore();
     }
