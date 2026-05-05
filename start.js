@@ -394,7 +394,15 @@
 
   function confirmChoice() {
     const focused = DAWN_SAGES[sageIndex];
-    window.chosenStartStar = focused.key;
+    // Route through the central state machine in cosmos.js. This sets the
+    // chosen star to GLOWING and lets syncDerivedFlags() update the legacy
+    // window.chosenStartStar / logosLocked flags consistently.
+    if (typeof window.chooseStartStar === 'function') {
+      window.chooseStartStar(focused.key);
+    } else {
+      // Fallback if cosmos.js hasn't loaded yet (shouldn't happen in practice).
+      window.chosenStartStar = focused.key;
+    }
     window.gameScreen = 'cosmos';
     if (typeof window.onStartStarChosen === 'function') {
       window.onStartStarChosen(focused.key);

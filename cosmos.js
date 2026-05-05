@@ -52,6 +52,100 @@ const DEITY_PORTALS = {
   logos:               ['clouds'],
 };
 
+// ===== Star illumination state =====
+// Single source of truth for what every star looks like on the map.
+// Every render path (orb visibility, alpha, halo, ring visibility, lock state)
+// reads from window.starState — never from scattered ad-hoc flags.
+//
+// Tier ladder (per spec section 5):
+//   0 HIDDEN   — not drawn at all
+//   1 DIM      — visible but locked (muted, no clickable hover)
+//   2 GLOWING  — unlocked + clickable, baseline glow
+//   3 BRIGHT   — completed enough to count toward Logos / Ancient unlocks
+//   4 RADIANT  — fully realized (post-completion final state)
+//
+// To progress the game, flip values here. Helpers below read this object.
+const TIER = { HIDDEN: 0, DIM: 1, GLOWING: 2, BRIGHT: 3, RADIANT: 4 };
+window.TIER = TIER;
+
+window.starState = window.starState || {
+  // Inner ring (Dawn) — all hidden until player picks one
+  inanna: TIER.HIDDEN,
+  osiris: TIER.HIDDEN,
+  sophia: TIER.HIDDEN,
+  vishnu: TIER.HIDDEN,
+  nuwa:   TIER.HIDDEN,
+  // Center (Logos) — visible but locked from the start
+  logos:  TIER.DIM,
+  // Outer ring (Ancient) — all hidden until ring unlocks
+  buddha:             TIER.HIDDEN,
+  sita:               TIER.HIDDEN,
+  socrates:           TIER.HIDDEN,
+  demeter_persephone: TIER.HIDDEN,
+  abraham_sarah:      TIER.HIDDEN,
+  hero_twins:         TIER.HIDDEN,
+  brigid:             TIER.HIDDEN,
+  zoroaster:          TIER.HIDDEN,
+};
+
+// Read helpers — every draw path uses these instead of inventing its own rule.
+function tierOf(key) { return window.starState[key] ?? TIER.HIDDEN; }
+function isVisible(key) { return tierOf(key) >= TIER.DIM; }
+function isClickable(key) { return tierOf(key) >= TIER.GLOWING; }
+function isBright(key) { return tierOf(key) >= TIER.BRIGHT; }
+window.tierOf = tierOf;
+window.isVisible = isVisible;
+window.isClickable = isClickable;
+window.isBright = isBright;
+
+// Mutator — single entry point so changes are auditable in console.
+window.setTier = function setTier(key, tier) {
+  if (!(key in window.starState)) {
+    console.warn('setTier: unknown star', key);
+    return;
+  }
+  const before = window.starState[key];
+  window.starState[key] = tier;
+  console.log(`[starState] ${key}: ${before} -> ${tier}`);
+  // Derived flags kept in sync so legacy draw code keeps working.
+  syncDerivedFlags();
+};
+
+// Derive the legacy flags from starState so older draw paths keep working
+// while we migrate. New code should read starState directly.
+function syncDerivedFlags() {
+  // chosenStartStar = whichever Dawn star is at GLOWING+ (only one until Bright)
+  const dawn = ['inanna','osiris','sophia','vishnu','nuwa'];
+  const lit = dawn.find(k => tierOf(k) >= TIER.GLOWING);
+  window.chosenStartStar = lit || null;
+  // logosLocked = Logos isn't yet GLOWING
+  window.logosLocked = tierOf('logos') < TIER.GLOWING;
+  // ancientRingUnlocked = all five Dawn stars are at BRIGHT+
+  window.ancientRingUnlocked = dawn.every(k => tierOf(k) >= TIER.BRIGHT);
+}
+window.syncDerivedFlags = syncDerivedFlags;
+syncDerivedFlags();
+
+// Convenience wrappers for the most common state transitions.
+// These let me say "Inanna was just chosen" instead of remembering tier numbers.
+window.chooseStartStar = function chooseStartStar(key) {
+  setTier(key, TIER.GLOWING);
+};
+window.markBright = function markBright(key) {
+  setTier(key, TIER.BRIGHT);
+  // Cascade rules from spec section 5:
+  // 1. First Dawn star at Bright -> Logos becomes GLOWING (clickable)
+  const dawn = ['inanna','osiris','sophia','vishnu','nuwa'];
+  if (dawn.includes(key) && tierOf('logos') < TIER.GLOWING) {
+    setTier('logos', TIER.GLOWING);
+  }
+  // 2. All five Dawn at Bright -> 8 Ancient stars become DIM (revealed)
+  if (dawn.every(k => tierOf(k) >= TIER.BRIGHT)) {
+    ['buddha','sita','socrates','demeter_persephone','abraham_sarah','hero_twins','brigid','zoroaster']
+      .forEach(k => { if (tierOf(k) === TIER.HIDDEN) setTier(k, TIER.DIM); });
+  }
+};
+
 // Active deity's slide queue + current index. Click-on-portal advances.
 let portalSlides = ['lapis'];
 let portalSlideIndex = 0;
@@ -351,57 +445,34 @@ for (let i = 0; i < 14; i++) {
 }
 
 // ===== Frame & cosmos rect =====
-// Smart hybrid frame sizing:
-//   - If viewport aspect is close to the frame's aspect (within tolerance):
-//       fill edge-to-edge with overscale so the painted wall in the asset
-//       bleeds off-screen and the wood frame meets the viewport edges.
-//   - If viewport aspect is far from frame's aspect (ultrawide, portrait):
-//       keep the frame at a sensible size centered, let the surrounding space
-//       fill with the wall (rendered separately by drawWallFallback).
+// Always-letterbox / contain-fit sizing. The whole 16:9 wood frame is
+// guaranteed visible on every monitor and every browser-chrome configuration,
+// with painted wall (drawWallFallback) filling whatever space is left over.
 //
-// The frame asset is 16:9. Common viewports:
-//   16:9   = 1.778 → perfect match, edge-to-edge
-//   16:10  = 1.600 → 9% off, edge-to-edge with overscale
-//   3:2    = 1.500 → 16% off, edge-to-edge (borderline)
-//   21:9   = 2.333 → 31% off, fall back to framed-on-wall
-//   32:9   = 3.556 → way off, fall back to framed-on-wall
-const FRAME_OVERSCALE = 1.30; // overscale to bleed wall off-screen in edge-to-edge mode
-const ASPECT_TOLERANCE = 0.20; // viewport may differ from frame aspect by up to ±20% before we fall back
+// This is the only behavior — no edge-to-edge / cover-fit branch — because
+// the wood frame is a UI surface (settings, save/load, embers will live on it)
+// and any cropping makes those controls unreachable on some screens.
+//
+// FRAME_MARGIN: how much breathing room to leave around the frame so it
+// doesn't touch the viewport edges. 0.96 = 4% wall margin on the constraining
+// axis. Bumping this toward 1.0 makes the frame larger; toward 0.9 makes the
+// wall margin more generous.
+const FRAME_MARGIN = 0.96;
 
 function getFrameRect() {
   const frameAspect = assets.frame.width / assets.frame.height; // ~1.778
   const viewportAspect = W / H;
-  const aspectRatio = viewportAspect / frameAspect; // 1.0 = perfect match
 
-  // Edge-to-edge mode: viewport close enough to frame aspect
-  if (aspectRatio >= 1 - ASPECT_TOLERANCE && aspectRatio <= 1 + ASPECT_TOLERANCE) {
-    let fw, fh;
-    if (viewportAspect > frameAspect) {
-      fw = W * FRAME_OVERSCALE;
-      fh = fw / frameAspect;
-    } else {
-      fh = H * FRAME_OVERSCALE;
-      fw = fh * frameAspect;
-    }
-    return {
-      fx: (W - fw) / 2,
-      fy: (H - fh) / 2,
-      fw,
-      fh,
-      mode: 'edge-to-edge',
-    };
-  }
-
-  // Framed-on-wall mode: viewport too far off, render frame at a comfortable
-  // size with wall around it. Sized to leave a sensible wall margin.
+  // Contain-fit: pick the axis that constrains and size the frame to fit
+  // inside the viewport along that axis, with a small margin.
   let fw, fh;
   if (viewportAspect > frameAspect) {
-    // Wider than frame (ultrawide) — fit by height with margin
-    fh = H * 0.92;
+    // Viewport is wider than frame — height is the constraint.
+    fh = H * FRAME_MARGIN;
     fw = fh * frameAspect;
   } else {
-    // Taller than frame (portrait) — fit by width with margin
-    fw = W * 0.92;
+    // Viewport is taller than frame — width is the constraint.
+    fw = W * FRAME_MARGIN;
     fh = fw / frameAspect;
   }
   return {
@@ -409,7 +480,7 @@ function getFrameRect() {
     fy: (H - fh) / 2,
     fw,
     fh,
-    mode: 'on-wall',
+    mode: 'contain',
   };
 }
 
